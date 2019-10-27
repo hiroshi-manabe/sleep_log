@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Sleep Log</title>
+<script type="text/javascript">
+  let data = {};
+      
+  function load() {
+      let d = JSON.parse(localStorage.getItem("data"));
+      if (!d) {
+          return { "values" : [] };
+      }
+      else {
+          return d;
+      }
+  }
+  
+  function save(d) {
+      localStorage.setItem("data", JSON.stringify(d));
+  }
+  
+  function init() {
+      data = load();
+      let isOnset = true;
+      if (!isEmpty(data)) {
+          isOnset = !isLastOnset(data);
+      }
+      record(data, new Date(), isOnset);
+  }
+  
+  function record(d, date, isOnset) {
+      d.values.push({"date" : date.getTime(), "isOnset" : isOnset});
+      save(data);
+      printValues(d);
+  }
+
+  function printValues(d) {
+      let obj = document.getElementById("result");
+      obj.innerHTML = "";
+      d.values.forEach(function(v) {
+          let date = new Date(v.date);
+          obj.insertAdjacentHTML("afterbegin", "<span>" + date.toLocaleString("ja-JP") + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
+      });
+  }
+
+  function update(d, date, isOnset) {
+      if (!isEmpty(d)) {
+          d.values.pop();
+      }
+      record(d, date, isOnset);
+  }
+  
+  function isEmpty(d) {
+      return d.values.length === 0;
+  }
+  
+  function isLastOnset(d) {
+      if (isEmpty(d)) return false;
+      let v = d.values[d.values.length - 1];
+      return v.isOnset;
+  }
+
+  function onUpdate(isOnset) {
+      let date = new Date();
+      let inputTime = document.getElementById("time").value;
+      let match = inputTime.match(/^(\d+):(\d+)$/);
+      if (match) {
+          let inputHours = match[1];
+          let inputMinutes = match[2];
+          if (inputHours > date.getHours() || (inputHours == date.getHours() && inputMinutes >= date.getMinutes())) {
+              date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
+          }
+          date.setHours(inputHours);
+          date.setMinutes(inputMinutes);
+      }
+      update(data, date, isOnset);
+  }
+
+  function onClear() {
+      data = { values: [] };
+      save(data);
+      printValues(data);
+  }
+</script>
+</head>
+<body onload="init();">
+  <input id="time" type="time">
+  <button onclick="onUpdate(true);">入眠</button>
+  <button onclick="onUpdate(false);">覚醒</button>
+  <button onclick="onClear();">クリア</button>
+  <div id="result">
+  </div>
+</body>
+</html>
