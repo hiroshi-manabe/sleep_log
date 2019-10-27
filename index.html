@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sleep Log</title>
 <script type="text/javascript">
   let data = {};
@@ -77,7 +78,15 @@
       update(data, date, isOnset);
   }
 
-  function onClear() {
+  function onClearOne() {
+      if (!isEmpty(data)) {
+          data.values.pop();
+      }
+      save(data);
+      printValues(data);
+  }
+  
+  function onClearAll() {
       data = { values: [] };
       save(data);
       printValues(data);
@@ -88,7 +97,8 @@
   <input id="time" type="time">
   <button onclick="onUpdate(true);">入眠</button>
   <button onclick="onUpdate(false);">覚醒</button>
-  <button onclick="onClear();">クリア</button>
+  <button onclick="onClearOne();">1件クリア</button>
+  <button onclick="onClearAll();">全クリア</button>
   <div id="result">
   </div>
 </body>
