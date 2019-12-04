@@ -47,9 +47,14 @@
   function printValues(d) {
       let obj = document.getElementById("result");
       obj.innerHTML = "";
+      let count = 0;
       d.values.forEach(function(v) {
           let date = new Date(v.date);
           obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
+          count++;
+          if (count >= 40) {
+              break;
+          }
       });
   }
 
@@ -106,7 +111,6 @@
   <button onclick="onUpdate(true);">入眠</button>
   <button onclick="onUpdate(false);">覚醒</button>
   <button onclick="onClearOne();">1件クリア</button>
-  <button onclick="onClearAll();">全クリア</button>
   <div id="result">
   </div>
 </body>
