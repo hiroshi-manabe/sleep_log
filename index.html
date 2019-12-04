@@ -49,12 +49,12 @@
       obj.innerHTML = "";
       let count = 0;
       d.values.forEach(function(v) {
-          let date = new Date(v.date);
-          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
           count++;
-          if (count >= 40) {
+          if (count > 40) {
               return;
           }
+          let date = new Date(v.date);
+          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
       });
   }
 
