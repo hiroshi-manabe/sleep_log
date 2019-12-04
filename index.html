@@ -53,7 +53,7 @@
           obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
           count++;
           if (count >= 40) {
-              break;
+              return;
           }
       });
   }
