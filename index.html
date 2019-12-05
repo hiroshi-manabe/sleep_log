@@ -48,11 +48,7 @@
       let obj = document.getElementById("result");
       obj.innerHTML = "";
       let count = 0;
-      d.values.forEach(function(v) {
-          count++;
-          if (count > 40) {
-              return;
-          }
+      d.values.slice(-40).forEach(function(v) {
           let date = new Date(v.date);
           obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
       });
