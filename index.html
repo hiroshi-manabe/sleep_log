@@ -23,15 +23,11 @@
   
   function init() {
       data = load();
-      let isOnset = true;
-      if (!isEmpty(data)) {
-          isOnset = !isLastOnset(data);
-      }
-      record(data, new Date(), isOnset);
+      printValues(data);
   }
   
-  function record(d, date, isOnset) {
-      d.values.push({"date" : date.getTime(), "isOnset" : isOnset});
+  function record(d, date, isOnset, isSpontaneous) {
+      d.values.push({"date" : date.getTime(), "isOnset" : isOnset, "isSpontaneous" : isSpontaneous});
       save(data);
       printValues(d);
   }
@@ -50,15 +46,13 @@
       let count = 0;
       d.values.slice(-40).forEach(function(v) {
           let date = new Date(v.date);
-          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v.isOnset ? "入眠" : "覚醒") + "</span><br>");
+          
+          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v["isOnset"] ? "入眠" : v["isSpontaneous"] ? "覚醒○" : "覚醒") + "</span><br>");
       });
   }
 
-  function update(d, date, isOnset) {
-      if (!isEmpty(d)) {
-          d.values.pop();
-      }
-      record(d, date, isOnset);
+  function update(d, date, isOnset, isSpontaneous) {
+      record(d, date, isOnset, isSpontaneous);
   }
   
   function isEmpty(d) {
@@ -71,7 +65,7 @@
       return v.isOnset;
   }
 
-  function onUpdate(isOnset) {
+  function onUpdate(isOnset, isSpontaneous) {
       let date = new Date();
       let inputTime = document.getElementById("time").value;
       let match = inputTime.match(/^(\d+):(\d+)$/);
@@ -84,7 +78,7 @@
           date.setHours(inputHours);
           date.setMinutes(inputMinutes);
       }
-      update(data, date, isOnset);
+      update(data, date, isOnset, isSpontaneous);
   }
 
   function onClearOne() {
@@ -101,12 +95,17 @@
       printValues(data);
   }
 </script>
+<style>
+  button { font-size: 200%; }
+</style>
+
 </head>
 <body onload="init();">
   <input id="time" type="time">
-  <button onclick="onUpdate(true);">入眠</button>
-  <button onclick="onUpdate(false);">覚醒</button>
-  <button onclick="onClearOne();">1件クリア</button>
+  <button onclick="onUpdate(true, false);">寝た</button>
+  <button onclick="onUpdate(false, true);">起○</button>
+  <button onclick="onUpdate(false, false);">起×</button>
+  <button onclick="onClearOne();">削除</button>
   <div id="result">
   </div>
 </body>
