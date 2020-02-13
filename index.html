@@ -65,8 +65,13 @@
       return v.isOnset;
   }
 
+  // Call isEmpty() before calling this
+  function getLastTime(d) {
+      let v = d.values[d.values.length - 1];
+      return v.isOnset;
+  }
+
   function onUpdate(isOnset, isSpontaneous) {
-      let date = new Date();
       let inputTime = document.getElementById("time").value;
       let match = inputTime.match(/^(\d+):(\d+)$/);
       if (match) {
@@ -74,6 +79,12 @@
           let inputMinutes = match[2];
           while (inputHours > date.getHours() || (inputHours == date.getHours() && inputMinutes >= date.getMinutes())) {
               date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
+          }
+          if (!isEmpty(data)) {
+              let lastTime = getLastTime(data);
+              while (date.getTime() - lastTime >= 24 * 60 * 60 * 1000) {
+                  data.setTime(data.getTime() - 24 * 60 * 60 * 1000);
+              }
           }
           date.setHours(inputHours);
           date.setMinutes(inputMinutes);
