@@ -84,7 +84,7 @@
           if (!isEmpty(data)) {
               let lastTime = getLastTime(data);
               while (date.getTime() - lastTime >= 24 * 60 * 60 * 1000) {
-                  data.setTime(data.getTime() - 24 * 60 * 60 * 1000);
+                  date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
               }
           }
           date.setHours(inputHours);
