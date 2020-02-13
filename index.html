@@ -82,7 +82,7 @@
               date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
           }
           if (!isEmpty(data)) {
-              let lastTime = getLastTime(data);
+              let lastTime = getLastTime(date);
               while (date.getTime() - lastTime >= 24 * 60 * 60 * 1000) {
                   date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
               }
