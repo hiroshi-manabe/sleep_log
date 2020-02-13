@@ -72,6 +72,7 @@
   }
 
   function onUpdate(isOnset, isSpontaneous) {
+      let date = new Date();
       let inputTime = document.getElementById("time").value;
       let match = inputTime.match(/^(\d+):(\d+)$/);
       if (match) {
