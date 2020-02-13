@@ -72,7 +72,7 @@
       if (match) {
           let inputHours = match[1];
           let inputMinutes = match[2];
-          if (inputHours > date.getHours() || (inputHours == date.getHours() && inputMinutes >= date.getMinutes())) {
+          while (inputHours > date.getHours() || (inputHours == date.getHours() && inputMinutes >= date.getMinutes())) {
               date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
           }
           date.setHours(inputHours);
