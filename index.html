@@ -81,6 +81,8 @@
           while (inputHours > date.getHours() || (inputHours == date.getHours() && inputMinutes >= date.getMinutes())) {
               date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
           }
+          date.setHours(inputHours);
+          date.setMinutes(inputMinutes);
           if (!isEmpty(data)) {
               let lastTime = getLastTime(data);
               while (date.getTime() - lastTime >= 24 * 60 * 60 * 1000) {
@@ -90,8 +92,6 @@
                   date.setTime(date.getTime() + 24 * 60 * 60 * 1000);
               }
           }
-          date.setHours(inputHours);
-          date.setMinutes(inputMinutes);
       }
       update(data, date, isOnset, isSpontaneous);
   }
