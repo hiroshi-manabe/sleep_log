@@ -49,6 +49,34 @@
           
           obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v["isOnset"] ? "入眠" : v["isSpontaneous"] ? "覚醒○" : "覚醒") + "</span><br>");
       });
+      let table_data = [];
+      let first = Math.floor((d.values[0]["date"] + 9 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000)) * 48 - 9 * 2;
+      let last = Math.floor((d.values[d.values.length-1]["date"] + 9 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000)) * 48 - 9 * 2;
+      let prev = first;
+      let prev_was_onset = true;
+      d.values.forEach(function(v) {
+          let cur = Math.floor((v["date"] + (15 * 60 * 1000)) / (30 * 60 * 1000));
+          for (let i = prev; i < cur; ++i) {
+              table_data.push(prev_was_onset ? 1 : 0);
+          }
+          prev = cur;
+          prev_was_onset = v["isOnset"];
+      });
+      for (let i = prev; i < last; ++i) {
+          table_data.push(prev_was_onset ? 1 : 0);
+      }
+      let table_html = "<table>";
+      for (let i = 0; i < table_data.length; ++i) {
+          if (i % 48 == 0) {
+              table_html += "<tr><td>" + formatDate(new Date((first + i) * (30 * 60 * 1000))) + "</td>";
+          }
+          table_html += "<td>" + table_data[i] + "</td>";
+          if (i % 48 == 47) {
+              table_html += "</tr>";
+          }
+      }
+      table_html += "</table>";
+      obj.insertAdjacentHTML("beforeEnd", table_html);
   }
 
   function update(d, date, isOnset, isSpontaneous) {
