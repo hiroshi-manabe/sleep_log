@@ -85,7 +85,7 @@
           }
           table_html += "<td>" + table_data[i] + "</td>";
           if (i % 48 == 47) {
-              table_html += "<td>" + (spontaneous_data[Math.floor((i + 1) / 48)] ? "○" : "")+ "</td>";
+              table_html += "<td>" + (spontaneous_data[Math.floor(i / 48) - 1] ? "○" : "")+ "</td>";
               table_html += "</tr>";
           }
       }
