@@ -36,8 +36,8 @@
       return `0${num}`.slice(-length);
   };
 
-  function formatDate(d) {
-      return zeroPaddingMax2(d.getMonth() + 1, 2) + "/" + zeroPaddingMax2(d.getDate(), 2) + "（" + "日月火水木金土".charAt(d.getDay()) + "） " + zeroPaddingMax2(d.getHours(), 2) + ":" + zeroPaddingMax2(d.getMinutes(), 2);
+  function formatDate(d, dateOnly) {
+      return zeroPaddingMax2(d.getMonth() + 1, 2) + "/" + zeroPaddingMax2(d.getDate(), 2) + "（" + "日月火水木金土".charAt(d.getDay()) + "） " + (dateOnly ? "" :zeroPaddingMax2(d.getHours(), 2) + ":" + zeroPaddingMax2(d.getMinutes(), 2));
   }
 
   function printValues(d) {
@@ -47,31 +47,45 @@
       d.values.slice(-40).forEach(function(v) {
           let date = new Date(v.date);
           
-          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date) + (v["isOnset"] ? "入眠" : v["isSpontaneous"] ? "覚醒○" : "覚醒") + "</span><br>");
+          obj.insertAdjacentHTML("afterbegin", "<span>" + formatDate(date, false) + (v["isOnset"] ? "入眠" : v["isSpontaneous"] ? "覚醒○" : "覚醒") + "</span><br>");
       });
       let table_data = [];
+      let spontaneous_data = [];
       let first = Math.floor((d.values[0]["date"] + 9 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000)) * 48 - 9 * 2;
       let last = Math.floor((d.values[d.values.length-1]["date"] + 9 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000)) * 48 - 9 * 2;
       let prev = first;
       let prev_was_onset = true;
+      let is_spontaneous = false;
       d.values.forEach(function(v) {
+          if (v["isSpontaneous"]) {
+              is_spontaneous = true;
+          }
           let cur = Math.floor((v["date"] + (15 * 60 * 1000)) / (30 * 60 * 1000));
           for (let i = prev; i < cur; ++i) {
               table_data.push(prev_was_onset ? 1 : 0);
+              if (table_data.length % 48 == 47) {
+                  spontaneous_data.push(is_spontaneous);
+                  is_spontaneous = false;
+              }
           }
           prev = cur;
           prev_was_onset = v["isOnset"];
       });
       for (let i = prev; i < last; ++i) {
           table_data.push(prev_was_onset ? 1 : 0);
+          if (table_data.length % 48 == 47) {
+              spontaneous_data.push(is_spontaneous);
+              is_spontaneous = false;
+          }
       }
       let table_html = "<table>";
       for (let i = 0; i < table_data.length; ++i) {
           if (i % 48 == 0) {
-              table_html += "<tr><td>" + formatDate(new Date((first + i) * (30 * 60 * 1000))) + "</td>";
+              table_html += "<tr><td>" + formatDate(new Date((first + i) * (30 * 60 * 1000)), true) + "</td>";
           }
           table_html += "<td>" + table_data[i] + "</td>";
           if (i % 48 == 47) {
+              table_html += "<td>" + (spontaneous_data[Math.floor(i / 48)] ? "○" : "")+ "</td>";
               table_html += "</tr>";
           }
       }
