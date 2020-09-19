@@ -114,6 +114,10 @@
   }
 
   function onUpdate(isOnset, isSpontaneous) {
+      if (!isEmpty(data) && isOnset == isLastOnset(data)) {
+          alert("就寝または起床が連続しています。");
+          return;
+      }
       let date = new Date();
       let inputTime = document.getElementById("time").value;
       let match = inputTime.match(/^(\d+):(\d+)$/);
